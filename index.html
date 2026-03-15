@@ -37,14 +37,14 @@
       <section class="hero-right">
         <div class="mock-hero-card">
           <div class="hero-chip"></div>
-          <div class="hero-headline">ID Card - Pet</div>
+          <div class="hero-headline" id="heroTitle">ID Card - Pet</div>
           <div class="hero-lines">
-            <span>Pet Name: Buddy</span>
-            <span>Breed: Labrador</span>
-            <span>Age: 3 anos · Sex: M</span>
+            <span id="heroPetName">Pet Name: Buddy</span>
+            <span id="heroBreed">Breed: Labrador</span>
+            <span id="heroAgeSex">Age: 3 anos · Sex: M</span>
           </div>
           <div class="hero-footer">
-            <small>Microchip: 00000012345</small>
+            <small id="heroMicrochip">Microchip: 00000012345</small>
           </div>
         </div>
       </section>
@@ -54,30 +54,30 @@
       <div class="card-shell">
         <div class="card-header">
           <div>
-            <div class="title">Pet Name: Buddy</div>
-            <div class="subtitle-normal">Breed: Labrador</div>
+            <div class="title" id="cardPetName">Pet Name: Buddy</div>
+            <div class="subtitle-normal" id="cardBreed">Breed: Labrador</div>
           </div>
           <div class="avatar"></div>
         </div>
 
         <div class="card-grid">
-          <div class="chip">Age: 3 anos</div>
-          <div class="chip">Sex: Macho</div>
-          <div class="chip">Species: Dog</div>
-          <div class="chip">Weight: 16.5 kg</div>
-          <div class="chip">Microchip ID: 00000012345</div>
-          <div class="chip">QR Code</div>
+          <div class="chip" id="cardAge">Age: 3 anos</div>
+          <div class="chip" id="cardSex">Sex: Macho</div>
+          <div class="chip" id="cardSpecies">Species: Dog</div>
+          <div class="chip" id="cardWeight">Weight: 16.5 kg</div>
+          <div class="chip" id="cardMicrochip">Microchip ID: 00000012345</div>
+          <div class="chip" id="cardQr">QR Code</div>
         </div>
 
         <div class="section-title">Medical Alerts</div>
-        <div class="info-box">Nenhuma alerta crítico. Vacinas em dia.</div>
+        <div class="info-box" id="cardMedicalAlerts">Nenhuma alerta crítico. Vacinas em dia.</div>
 
         <div class="section-title">Owner Contact</div>
-        <div class="info-box">Mari Silva - +55 11 99999-9999</div>
+        <div class="info-box" id="cardOwnerContact">Mari Silva - +55 11 99999-9999</div>
 
         <div class="details-row">
-          <div class="detail-item"><strong>Clinic:</strong> VetCare São Paulo</div>
-          <div class="detail-item"><strong>Phone:</strong> +55 11 3333-0000</div>
+          <div class="detail-item"><strong>Clinic:</strong> <span id="cardClinic">VetCare São Paulo</span></div>
+          <div class="detail-item"><strong>Phone:</strong> <span id="cardClinicPhone">+55 11 3333-0000</span></div>
         </div>
       </div>
     </section>
@@ -86,5 +86,71 @@
       <p>Design inspirado no layout fornecido. Os dados do ID Card podem ser inseridos pelo backend/iframe no painel.</p>
     </footer>
   </div>
+  <script>
+    (function () {
+      function safeParse(value) {
+        if (!value) return null;
+        try {
+          return JSON.parse(value);
+        } catch (err) {
+          return null;
+        }
+      }
+
+      function getParamData() {
+        var params = new URLSearchParams(window.location.search);
+        var raw = params.get('data');
+        if (!raw) return null;
+        var decoded = raw;
+        try {
+          decoded = decodeURIComponent(raw);
+        } catch (err) {
+          decoded = raw;
+        }
+        return safeParse(decoded);
+      }
+
+      var data = getParamData();
+      if (!data) return;
+
+      function setText(id, text) {
+        var el = document.getElementById(id);
+        if (!el || !text) return;
+        el.textContent = text;
+      }
+
+      var petName = data.petName || 'Pet';
+      var breed = data.breed || '-';
+      var age = data.age || '-';
+      var sex = data.sex || data.gender || '-';
+      var species = data.species || '-';
+      var weight = data.weight || '-';
+      var microchip = data.microchipId || data.microchip || '-';
+      var owner = data.owner || '-';
+      var ownerPhone = data.ownerPhone || data.emergencyPhone || '-';
+      var clinic = data.vet || data.vetName || '-';
+      var clinicPhone = data.vetPhone || '-';
+      var alerts = data.medicalAlerts || data.allergies || data.medicalConditions || '-';
+
+      setText('heroTitle', 'ID Card - ' + petName);
+      setText('heroPetName', 'Pet Name: ' + petName);
+      setText('heroBreed', 'Breed: ' + breed);
+      setText('heroAgeSex', 'Age: ' + age + ' · Sex: ' + sex);
+      setText('heroMicrochip', 'Microchip: ' + microchip);
+
+      setText('cardPetName', 'Pet Name: ' + petName);
+      setText('cardBreed', 'Breed: ' + breed);
+      setText('cardAge', 'Age: ' + age);
+      setText('cardSex', 'Sex: ' + sex);
+      setText('cardSpecies', 'Species: ' + species);
+      setText('cardWeight', 'Weight: ' + weight);
+      setText('cardMicrochip', 'Microchip ID: ' + microchip);
+      setText('cardMedicalAlerts', alerts);
+      setText('cardOwnerContact', owner + ' - ' + ownerPhone);
+      setText('cardClinic', clinic);
+      setText('cardClinicPhone', clinicPhone);
+    })();
+  </script>
 </body>
 </html>
+
