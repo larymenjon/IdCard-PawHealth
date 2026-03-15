@@ -69,15 +69,15 @@
           <div class="chip" id="cardQr">QR Code</div>
         </div>
 
-        <div class="section-title">Medical Alerts</div>
+        <div class="section-title" id="cardMedicalTitle">Medical Alerts</div>
         <div class="info-box" id="cardMedicalAlerts">Nenhuma alerta crÃ­tico. Vacinas em dia.</div>
 
-        <div class="section-title">Owner Contact</div>
+        <div class="section-title" id="cardOwnerTitle">Owner Contact</div>
         <div class="info-box" id="cardOwnerContact">Mari Silva - +55 11 99999-9999</div>
 
         <div class="details-row">
-          <div class="detail-item"><strong>Clinic:</strong> <span id="cardClinic">VetCare SÃ£o Paulo</span></div>
-          <div class="detail-item"><strong>Phone:</strong> <span id="cardClinicPhone">+55 11 3333-0000</span></div>
+          <div class="detail-item"><strong id="cardClinicLabel">Clinic:</strong> <span id="cardClinic">VetCare SÃ£o Paulo</span></div>
+          <div class="detail-item"><strong id="cardPhoneLabel">Phone:</strong> <span id="cardClinicPhone">+55 11 3333-0000</span></div>
         </div>
       </div>
     </section>
@@ -86,6 +86,7 @@
       <p>Design inspirado no layout fornecido. Os dados do ID Card podem ser inseridos pelo backend/iframe no painel.</p>
     </footer>
   </div>
+  
   <script>
     (function () {
       function safeParse(value) {
@@ -110,14 +111,121 @@
         return safeParse(decoded);
       }
 
-      var data = getParamData();
-      if (!data) return;
-
       function setText(id, text) {
         var el = document.getElementById(id);
         if (!el || !text) return;
         el.textContent = text;
       }
+
+      var data = getParamData();
+      if (!data) return;
+
+      var labels = {
+        'en': {
+          idCardTitle: 'ID Card',
+          petName: 'Pet Name:',
+          breed: 'Breed:',
+          age: 'Age:',
+          sex: 'Sex:',
+          species: 'Species:',
+          weight: 'Weight:',
+          microchip: 'Microchip:',
+          microchipId: 'Microchip ID:',
+          medicalAlerts: 'Medical Alerts',
+          ownerContact: 'Owner Contact',
+          allergies: 'Allergies:',
+          medicalConditions: 'Medical Conditions:',
+          currentMeds: 'Current Medications:',
+          specialNeeds: 'Special Needs:',
+          clinic: 'Clinic:',
+          phone: 'Phone:',
+          qrCode: 'QR Code'
+        },
+        'pt-BR': {
+          idCardTitle: 'Card ID',
+          petName: 'Nome do pet:',
+          breed: 'Raça:',
+          age: 'Idade:',
+          sex: 'Sexo:',
+          species: 'Espécie:',
+          weight: 'Peso:',
+          microchip: 'Microchip:',
+          microchipId: 'Microchip ID:',
+          medicalAlerts: 'Alertas Médicos',
+          ownerContact: 'Contato do Dono',
+          allergies: 'Alergias:',
+          medicalConditions: 'Condições médicas:',
+          currentMeds: 'Medicamentos atuais:',
+          specialNeeds: 'Necessidades especiais:',
+          clinic: 'Clínica:',
+          phone: 'Telefone:',
+          qrCode: 'QR Code'
+        },
+        'es': {
+          idCardTitle: 'Card ID',
+          petName: 'Nombre de la mascota:',
+          breed: 'Raza:',
+          age: 'Edad:',
+          sex: 'Sexo:',
+          species: 'Especie:',
+          weight: 'Peso:',
+          microchip: 'Microchip:',
+          microchipId: 'Microchip ID:',
+          medicalAlerts: 'Alertas Médicas',
+          ownerContact: 'Contacto del dueño',
+          allergies: 'Alergias:',
+          medicalConditions: 'Condiciones médicas:',
+          currentMeds: 'Medicamentos actuales:',
+          specialNeeds: 'Necesidades especiales:',
+          clinic: 'Clínica:',
+          phone: 'Teléfono:',
+          qrCode: 'QR Code'
+        },
+        'fr': {
+          idCardTitle: 'Card ID',
+          petName: 'Nom de l\'animal :',
+          breed: 'Race :',
+          age: 'Âge :',
+          sex: 'Sexe :',
+          species: 'Espèce :',
+          weight: 'Poids :',
+          microchip: 'Microchip :',
+          microchipId: 'Microchip ID :',
+          medicalAlerts: 'Alertes médicales',
+          ownerContact: 'Contact du propriétaire',
+          allergies: 'Allergies :',
+          medicalConditions: 'Conditions médicales :',
+          currentMeds: 'Médicaments actuels :',
+          specialNeeds: 'Besoins spéciaux :',
+          clinic: 'Clinique :',
+          phone: 'Téléphone :',
+          qrCode: 'QR Code'
+        },
+        'it': {
+          idCardTitle: 'Card ID',
+          petName: 'Nome del pet:',
+          breed: 'Razza:',
+          age: 'Età:',
+          sex: 'Sesso:',
+          species: 'Specie:',
+          weight: 'Peso:',
+          microchip: 'Microchip:',
+          microchipId: 'Microchip ID:',
+          medicalAlerts: 'Avvisi medici',
+          ownerContact: 'Contatto proprietario',
+          allergies: 'Allergie:',
+          medicalConditions: 'Condizioni mediche:',
+          currentMeds: 'Farmaci attuali:',
+          specialNeeds: 'Bisogni speciali:',
+          clinic: 'Clinica:',
+          phone: 'Telefono:',
+          qrCode: 'QR Code'
+        }
+      };
+
+      var lang = data.lang || 'en';
+      if (!labels[lang]) lang = 'en';
+      var L = labels[lang];
 
       var petName = data.petName || 'Pet';
       var breed = data.breed || '-';
@@ -130,27 +238,40 @@
       var ownerPhone = data.ownerPhone || data.emergencyPhone || '-';
       var clinic = data.vet || data.vetName || '-';
       var clinicPhone = data.vetPhone || '-';
-      var alerts = data.medicalAlerts || data.allergies || data.medicalConditions || '-';
 
-      setText('heroTitle', 'ID Card - ' + petName);
-      setText('heroPetName', 'Pet Name: ' + petName);
-      setText('heroBreed', 'Breed: ' + breed);
-      setText('heroAgeSex', 'Age: ' + age + ' Â· Sex: ' + sex);
-      setText('heroMicrochip', 'Microchip: ' + microchip);
+      var alertParts = [];
+      if (data.allergies) alertParts.push(L.allergies + ' ' + data.allergies);
+      if (data.medicalConditions) alertParts.push(L.medicalConditions + ' ' + data.medicalConditions);
+      if (data.currentMeds) alertParts.push(L.currentMeds + ' ' + data.currentMeds);
+      if (data.specialNeeds) alertParts.push(L.specialNeeds + ' ' + data.specialNeeds);
+      var alerts = data.medicalAlerts || (alertParts.length ? alertParts.join(' Â· ') : '-');
 
-      setText('cardPetName', 'Pet Name: ' + petName);
-      setText('cardBreed', 'Breed: ' + breed);
-      setText('cardAge', 'Age: ' + age);
-      setText('cardSex', 'Sex: ' + sex);
-      setText('cardSpecies', 'Species: ' + species);
-      setText('cardWeight', 'Weight: ' + weight);
-      setText('cardMicrochip', 'Microchip ID: ' + microchip);
+      setText('heroTitle', L.idCardTitle + ' - ' + petName);
+      setText('heroPetName', L.petName + ' ' + petName);
+      setText('heroBreed', L.breed + ' ' + breed);
+      setText('heroAgeSex', L.age + ' ' + age + ' Â· ' + L.sex + ' ' + sex);
+      setText('heroMicrochip', L.microchip + ' ' + microchip);
+
+      setText('cardPetName', L.petName + ' ' + petName);
+      setText('cardBreed', L.breed + ' ' + breed);
+      setText('cardAge', L.age + ' ' + age);
+      setText('cardSex', L.sex + ' ' + sex);
+      setText('cardSpecies', L.species + ' ' + species);
+      setText('cardWeight', L.weight + ' ' + weight);
+      setText('cardMicrochip', L.microchipId + ' ' + microchip);
+      setText('cardQr', L.qrCode);
+
+      setText('cardMedicalTitle', L.medicalAlerts);
+      setText('cardOwnerTitle', L.ownerContact);
       setText('cardMedicalAlerts', alerts);
       setText('cardOwnerContact', owner + ' - ' + ownerPhone);
+      setText('cardClinicLabel', L.clinic);
+      setText('cardPhoneLabel', L.phone);
       setText('cardClinic', clinic);
       setText('cardClinicPhone', clinicPhone);
     })();
   </script>
 </body>
 </html>
+
 
