@@ -29,7 +29,7 @@
         <h1>Seu pet mais seguro com o ID Card do PawHealth</h1>
         <p class="subtitle">Este Ã© o seu painel de visualizaÃ§Ã£o do ID Card. Aqui vocÃª vÃª todas as informaÃ§Ãµes essenciais do seu pet num layout elegante.</p>
         <div class="hero-buttons">
-          <button class="btn-primary">Abrir ID Card</button>
+          <button class="btn-primary" id="openCardBtn">Abrir ID Card</button>
           <button class="btn-secondary">Ver detalhes</button>
         </div>
       </section>
@@ -87,7 +87,6 @@
     </footer>
   </div>
   
-  
   <script>
     (function () {
       function safeParse(value) {
@@ -103,188 +102,151 @@
         var params = new URLSearchParams(window.location.search);
         var raw = params.get('data');
         if (!raw) return null;
-        var decoded = raw;
         try {
-          decoded = decodeURIComponent(raw);
+          return safeParse(decodeURIComponent(raw));
         } catch (err) {
-          decoded = raw;
+          return safeParse(raw);
         }
-        return safeParse(decoded);
+      }
+
+      function getAppData() {
+        var raw = localStorage.getItem('pawhealth_idcard_data') || localStorage.getItem('pawhealth_user') || localStorage.getItem('pawhealth_app_data');
+        if (raw) {
+          var parsed = safeParse(raw);
+          if (parsed && typeof parsed === 'object') return parsed;
+        }
+
+        if (window.APP_USER && typeof window.APP_USER === 'object') return window.APP_USER;
+        if (window.parent && window.parent.APP_USER && typeof window.parent.APP_USER === 'object') return window.parent.APP_USER;
+        if (window.parent && window.parent.PAWHEALTH_USER && typeof window.parent.PAWHEALTH_USER === 'object') return window.parent.PAWHEALTH_USER;
+        
+        return null;
       }
 
       function setText(id, text) {
         var el = document.getElementById(id);
-        if (!el || !text) return;
-        el.textContent = text;
+        if (!el) return;
+        el.textContent = text || '';
       }
 
-      var data = getParamData();\n      var panel = document.getElementById('cardPanel');\n      if (!data) {\n        if (panel) panel.classList.add('is-hidden');\n        return;\n      }\n      if (panel) panel.classList.remove('is-hidden');
-
-      var labels = {
-        'en': {
-          idCardTitle: 'ID Card',
-          petName: 'Pet Name:',
-          breed: 'Breed:',
-          age: 'Age:',
-          sex: 'Sex:',
-          species: 'Species:',
-          weight: 'Weight:',
-          microchip: 'Microchip:',
-          microchipId: 'Microchip ID:',
-          medicalAlerts: 'Medical Alerts',
-          ownerContact: 'Owner Contact',
-          allergies: 'Allergies:',
-          medicalConditions: 'Medical Conditions:',
-          currentMeds: 'Current Medications:',
-          specialNeeds: 'Special Needs:',
-          clinic: 'Clinic:',
-          phone: 'Phone:',
-          qrCode: 'QR Code'
-        },
-        'pt-BR': {
-          idCardTitle: 'Card ID',
-          petName: 'Nome do pet:',
-          breed: 'Raça:',
-          age: 'Idade:',
-          sex: 'Sexo:',
-          species: 'Espécie:',
-          weight: 'Peso:',
-          microchip: 'Microchip:',
-          microchipId: 'Microchip ID:',
-          medicalAlerts: 'Alertas Médicos',
-          ownerContact: 'Contato do Dono',
-          allergies: 'Alergias:',
-          medicalConditions: 'Condições médicas:',
-          currentMeds: 'Medicamentos atuais:',
-          specialNeeds: 'Necessidades especiais:',
-          clinic: 'Clínica:',
-          phone: 'Telefone:',
-          qrCode: 'QR Code'
-        },
-        'es': {
-          idCardTitle: 'Card ID',
-          petName: 'Nombre de la mascota:',
-          breed: 'Raza:',
-          age: 'Edad:',
-          sex: 'Sexo:',
-          species: 'Especie:',
-          weight: 'Peso:',
-          microchip: 'Microchip:',
-          microchipId: 'Microchip ID:',
-          medicalAlerts: 'Alertas Médicas',
-          ownerContact: 'Contacto del dueño',
-          allergies: 'Alergias:',
-          medicalConditions: 'Condiciones médicas:',
-          currentMeds: 'Medicamentos actuales:',
-          specialNeeds: 'Necesidades especiales:',
-          clinic: 'Clínica:',
-          phone: 'Teléfono:',
-          qrCode: 'QR Code'
-        },
-        'fr': {
-          idCardTitle: 'Card ID',
-          petName: 'Nom de l\'animal :',
-          breed: 'Race :',
-          age: 'Âge :',
-          sex: 'Sexe :',
-          species: 'Espèce :',
-          weight: 'Poids :',
-          microchip: 'Microchip :',
-          microchipId: 'Microchip ID :',
-          medicalAlerts: 'Alertes médicales',
-          ownerContact: 'Contact du propriétaire',
-          allergies: 'Allergies :',
-          medicalConditions: 'Conditions médicales :',
-          currentMeds: 'Médicaments actuels :',
-          specialNeeds: 'Besoins spéciaux :',
-          clinic: 'Clinique :',
-          phone: 'Téléphone :',
-          qrCode: 'QR Code'
-        },
-        'it': {
-          idCardTitle: 'Card ID',
-          petName: 'Nome del pet:',
-          breed: 'Razza:',
-          age: 'Età:',
-          sex: 'Sesso:',
-          species: 'Specie:',
-          weight: 'Peso:',
-          microchip: 'Microchip:',
-          microchipId: 'Microchip ID:',
-          medicalAlerts: 'Avvisi medici',
-          ownerContact: 'Contatto proprietario',
-          allergies: 'Allergie:',
-          medicalConditions: 'Condizioni mediche:',
-          currentMeds: 'Farmaci attuali:',
-          specialNeeds: 'Bisogni speciali:',
-          clinic: 'Clinica:',
-          phone: 'Telefono:',
-          qrCode: 'QR Code'
-        }
-      };
-
-      function pick(keyLong, keyShort, fallback) {
-        if (data[keyLong]) return data[keyLong];
-        if (data[keyShort]) return data[keyShort];
+      function pick(data, keyLong, keyShort, fallback) {
+        if (!data) return fallback || '';
+        if (data[keyLong] !== undefined && data[keyLong] !== null && data[keyLong] !== '') return data[keyLong];
+        if (data[keyShort] !== undefined && data[keyShort] !== null && data[keyShort] !== '') return data[keyShort];
         return fallback || '';
       }
 
-      var lang = pick('lang', 'l', 'en');
-      if (!labels[lang]) lang = 'en';
-      var L = labels[lang];
+      function showCardData(data) {
+        var labels = {
+          'en': {
+            idCardTitle: 'ID Card',
+            petName: 'Pet Name:',
+            breed: 'Breed:',
+            age: 'Age:',
+            sex: 'Sex:',
+            species: 'Species:',
+            weight: 'Weight:',
+            microchip: 'Microchip:',
+            microchipId: 'Microchip ID:',
+            medicalAlerts: 'Medical Alerts',
+            ownerContact: 'Owner Contact',
+            allergies: 'Allergies:',
+            medicalConditions: 'Medical Conditions:',
+            currentMeds: 'Current Medications:',
+            specialNeeds: 'Special Needs:',
+            clinic: 'Clinic:',
+            phone: 'Phone:',
+            qrCode: 'QR Code'
+          },
+          'pt-BR': {
+            idCardTitle: 'Card ID',
+            petName: 'Nome do pet:',
+            breed: 'RaÃ§a:',
+            age: 'Idade:',
+            sex: 'Sexo:',
+            species: 'EspÃ©cie:',
+            weight: 'Peso:',
+            microchip: 'Microchip:',
+            microchipId: 'Microchip ID:',
+            medicalAlerts: 'Alertas MÃ©dicos',
+            ownerContact: 'Contato do Dono',
+            allergies: 'Alergias:',
+            medicalConditions: 'CondiÃ§Ãµes mÃ©dicas:',
+            currentMeds: 'Medicamentos atuais:',
+            specialNeeds: 'Necessidades especiais:',
+            clinic: 'ClÃ­nica:',
+            phone: 'Telefone:',
+            qrCode: 'QR Code'
+          }
+        };
 
-      var petName = pick('petName', 'n', 'Pet');
-      var breed = pick('breed', 'b', '-');
-      var age = pick('age', 'a', '-');
-      var sex = pick('sex', 's', '-');
-      var species = pick('species', 'sp', '-');
-      var weight = pick('weight', 'w', '-');
-      var microchip = pick('microchipId', 'm', '-');
-      var owner = pick('owner', 'o', '-');
-      var ownerPhone = pick('ownerPhone', 'op', pick('emergencyPhone', 'ep', '-'));
-      var clinic = pick('vet', 'v', pick('vetName', 'v', '-'));
-      var clinicPhone = pick('vetPhone', 'vp', '-');
+        var lang = pick(data, 'lang', 'l', 'pt-BR');
+        if (!labels[lang]) lang = 'pt-BR';
+        var L = labels[lang];
 
-      var allergies = pick('allergies', 'al', '');
-      var medicalConditions = pick('medicalConditions', 'mc', '');
-      var currentMeds = pick('currentMeds', 'cm', '');
-      var specialNeeds = pick('specialNeeds', 'sn', '');
+        var petName = pick(data, 'petName', 'n', 'Pet');
+        var breed = pick(data, 'breed', 'b', '-');
+        var age = pick(data, 'age', 'a', '-');
+        var sex = pick(data, 'sex', 's', '-');
+        var species = pick(data, 'species', 'sp', '-');
+        var weight = pick(data, 'weight', 'w', '-');
+        var microchip = pick(data, 'microchipId', 'm', '-');
+        var owner = pick(data, 'owner', 'o', '-');
+        var ownerPhone = pick(data, 'ownerPhone', 'op', pick(data, 'emergencyPhone', 'ep', '-'));
+        var clinic = pick(data, 'vet', 'v', pick(data, 'vetName', 'v', '-'));
+        var clinicPhone = pick(data, 'vetPhone', 'vp', '-');
 
-      var alertParts = [];
-      if (allergies) alertParts.push(L.allergies + ' ' + allergies);
-      if (medicalConditions) alertParts.push(L.medicalConditions + ' ' + medicalConditions);
-      if (currentMeds) alertParts.push(L.currentMeds + ' ' + currentMeds);
-      if (specialNeeds) alertParts.push(L.specialNeeds + ' ' + specialNeeds);
-      var alerts = data.medicalAlerts || (alertParts.length ? alertParts.join(' · ') : '-');
+        var allergies = pick(data, 'allergies', 'al', '');
+        var medicalConditions = pick(data, 'medicalConditions', 'mc', '');
+        var currentMeds = pick(data, 'currentMeds', 'cm', '');
+        var specialNeeds = pick(data, 'specialNeeds', 'sn', '');
 
-      setText('heroTitle', L.idCardTitle + ' - ' + petName);
-      setText('heroPetName', L.petName + ' ' + petName);
-      setText('heroBreed', L.breed + ' ' + breed);
-      setText('heroAgeSex', L.age + ' ' + age + ' · ' + L.sex + ' ' + sex);
-      setText('heroMicrochip', L.microchip + ' ' + microchip);
+        var alertParts = [];
+        if (allergies) alertParts.push(L.allergies + ' ' + allergies);
+        if (medicalConditions) alertParts.push(L.medicalConditions + ' ' + medicalConditions);
+        if (currentMeds) alertParts.push(L.currentMeds + ' ' + currentMeds);
+        if (specialNeeds) alertParts.push(L.specialNeeds + ' ' + specialNeeds);
+        var alerts = pick(data, 'medicalAlerts', 'ma', alertParts.length ? alertParts.join(' â€¢ ') : '-');
 
-      setText('cardPetName', L.petName + ' ' + petName);
-      setText('cardBreed', L.breed + ' ' + breed);
-      setText('cardAge', L.age + ' ' + age);
-      setText('cardSex', L.sex + ' ' + sex);
-      setText('cardSpecies', L.species + ' ' + species);
-      setText('cardWeight', L.weight + ' ' + weight);
-      setText('cardMicrochip', L.microchipId + ' ' + microchip);
-      setText('cardQr', L.qrCode);
+        setText('heroTitle', L.idCardTitle + ' - ' + petName);
+        setText('heroPetName', L.petName + ' ' + petName);
+        setText('heroBreed', L.breed + ' ' + breed);
+        setText('heroAgeSex', L.age + ' ' + age + ' â€¢ ' + L.sex + ' ' + sex);
+        setText('heroMicrochip', L.microchip + ' ' + microchip);
 
-      setText('cardMedicalTitle', L.medicalAlerts);
-      setText('cardOwnerTitle', L.ownerContact);
-      setText('cardMedicalAlerts', alerts);
-      setText('cardOwnerContact', owner + ' - ' + ownerPhone);
-      setText('cardClinicLabel', L.clinic);
-      setText('cardPhoneLabel', L.phone);
-      setText('cardClinic', clinic);
-      setText('cardClinicPhone', clinicPhone);
+        setText('cardPetName', L.petName + ' ' + petName);
+        setText('cardBreed', L.breed + ' ' + breed);
+        setText('cardAge', L.age + ' ' + age);
+        setText('cardSex', L.sex + ' ' + sex);
+        setText('cardSpecies', L.species + ' ' + species);
+        setText('cardWeight', L.weight + ' ' + weight);
+        setText('cardMicrochip', L.microchipId + ' ' + microchip);
+        setText('cardQr', L.qrCode);
+
+        setText('cardMedicalTitle', L.medicalAlerts);
+        setText('cardOwnerTitle', L.ownerContact);
+        setText('cardMedicalAlerts', alerts);
+        setText('cardOwnerContact', owner + ' - ' + ownerPhone);
+        setText('cardClinicLabel', L.clinic);
+        setText('cardPhoneLabel', L.phone);
+        setText('cardClinic', clinic);
+        setText('cardClinicPhone', clinicPhone);
+      }
+
+      var data = getParamData() || getAppData();
+      var panel = document.getElementById('cardPanel');
+      if (!data) {
+        if (panel) panel.classList.add('is-hidden');
+      } else {
+        if (panel) panel.classList.remove('is-hidden');
+        showCardData(data);
+      }
+
+      var openBtn = document.getElementById('openCardBtn');
+      if (openBtn) openBtn.addEventListener('click', function () {
+        if (panel) panel.classList.toggle('is-hidden');
+      });
     })();
   </script>
 </body>
 </html>
-
-
-
-
