@@ -50,7 +50,7 @@
       </section>
     </main>
 
-    <section class="card-panel">
+    <section class="card-panel is-hidden" id="cardPanel">
       <div class="card-shell">
         <div class="card-header">
           <div>
@@ -87,6 +87,7 @@
     </footer>
   </div>
   
+  
   <script>
     (function () {
       function safeParse(value) {
@@ -117,8 +118,7 @@
         el.textContent = text;
       }
 
-      var data = getParamData();
-      if (!data) return;
+      var data = getParamData();\n      var panel = document.getElementById('cardPanel');\n      if (!data) {\n        if (panel) panel.classList.add('is-hidden');\n        return;\n      }\n      if (panel) panel.classList.remove('is-hidden');
 
       var labels = {
         'en': {
@@ -223,33 +223,44 @@
         }
       };
 
-      var lang = data.lang || 'en';
+      function pick(keyLong, keyShort, fallback) {
+        if (data[keyLong]) return data[keyLong];
+        if (data[keyShort]) return data[keyShort];
+        return fallback || '';
+      }
+
+      var lang = pick('lang', 'l', 'en');
       if (!labels[lang]) lang = 'en';
       var L = labels[lang];
 
-      var petName = data.petName || 'Pet';
-      var breed = data.breed || '-';
-      var age = data.age || '-';
-      var sex = data.sex || data.gender || '-';
-      var species = data.species || '-';
-      var weight = data.weight || '-';
-      var microchip = data.microchipId || data.microchip || '-';
-      var owner = data.owner || '-';
-      var ownerPhone = data.ownerPhone || data.emergencyPhone || '-';
-      var clinic = data.vet || data.vetName || '-';
-      var clinicPhone = data.vetPhone || '-';
+      var petName = pick('petName', 'n', 'Pet');
+      var breed = pick('breed', 'b', '-');
+      var age = pick('age', 'a', '-');
+      var sex = pick('sex', 's', '-');
+      var species = pick('species', 'sp', '-');
+      var weight = pick('weight', 'w', '-');
+      var microchip = pick('microchipId', 'm', '-');
+      var owner = pick('owner', 'o', '-');
+      var ownerPhone = pick('ownerPhone', 'op', pick('emergencyPhone', 'ep', '-'));
+      var clinic = pick('vet', 'v', pick('vetName', 'v', '-'));
+      var clinicPhone = pick('vetPhone', 'vp', '-');
+
+      var allergies = pick('allergies', 'al', '');
+      var medicalConditions = pick('medicalConditions', 'mc', '');
+      var currentMeds = pick('currentMeds', 'cm', '');
+      var specialNeeds = pick('specialNeeds', 'sn', '');
 
       var alertParts = [];
-      if (data.allergies) alertParts.push(L.allergies + ' ' + data.allergies);
-      if (data.medicalConditions) alertParts.push(L.medicalConditions + ' ' + data.medicalConditions);
-      if (data.currentMeds) alertParts.push(L.currentMeds + ' ' + data.currentMeds);
-      if (data.specialNeeds) alertParts.push(L.specialNeeds + ' ' + data.specialNeeds);
-      var alerts = data.medicalAlerts || (alertParts.length ? alertParts.join(' Â· ') : '-');
+      if (allergies) alertParts.push(L.allergies + ' ' + allergies);
+      if (medicalConditions) alertParts.push(L.medicalConditions + ' ' + medicalConditions);
+      if (currentMeds) alertParts.push(L.currentMeds + ' ' + currentMeds);
+      if (specialNeeds) alertParts.push(L.specialNeeds + ' ' + specialNeeds);
+      var alerts = data.medicalAlerts || (alertParts.length ? alertParts.join(' · ') : '-');
 
       setText('heroTitle', L.idCardTitle + ' - ' + petName);
       setText('heroPetName', L.petName + ' ' + petName);
       setText('heroBreed', L.breed + ' ' + breed);
-      setText('heroAgeSex', L.age + ' ' + age + ' Â· ' + L.sex + ' ' + sex);
+      setText('heroAgeSex', L.age + ' ' + age + ' · ' + L.sex + ' ' + sex);
       setText('heroMicrochip', L.microchip + ' ' + microchip);
 
       setText('cardPetName', L.petName + ' ' + petName);
@@ -273,5 +284,7 @@
   </script>
 </body>
 </html>
+
+
 
 
